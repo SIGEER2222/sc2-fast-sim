@@ -6,7 +6,8 @@
 
 - Phase 1：ECS 核心 + 不变量测试 ✅ 已完成（34 测试通过）
 - Phase 2：catalog + scenario 加载 ✅ 已完成（66 测试通过）
-- Phase 3：movement + combat 系统（待规划）
+- Phase 3：movement + combat 系统 ✅ 已完成（102 测试通过）
+- Phase 4：terrain + pathfinding（待规划）
 
 设计文档：`../.omx/plans/sc2-fast-sim-design.md`
 实施计划：`../.omx/plans/sc2-fast-sim-implementation-plan.md`

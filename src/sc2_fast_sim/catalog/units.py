@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from .model import Attribute, DamageType, TargetFilter, UnitType, WeaponType
+from .model import Attribute, ArmorClass, DamageType, TargetFilter, UnitType, WeaponType
 
 
 MARINE = UnitType(
@@ -28,8 +28,10 @@ MARINE = UnitType(
         period=19,
         damage_type=DamageType.NORMAL,
         target_filters=frozenset({TargetFilter.GROUND, TargetFilter.AIR}),
+        versus={ArmorClass.LIGHT: 100, ArmorClass.ARMORED: 100, ArmorClass.BIOLOGICAL: 100},
     ),
     weapon_air=None,
+    armor_class=ArmorClass.LIGHT,
 )
 
 
@@ -53,8 +55,10 @@ ZERGLING = UnitType(
         period=16,
         damage_type=DamageType.NORMAL,
         target_filters=frozenset({TargetFilter.GROUND}),
+        versus={ArmorClass.LIGHT: 100, ArmorClass.ARMORED: 100, ArmorClass.BIOLOGICAL: 100},
     ),
     weapon_air=None,
+    armor_class=ArmorClass.LIGHT,
 )
 
 

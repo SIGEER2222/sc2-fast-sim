@@ -40,9 +40,18 @@ class DamageType(str, Enum):
     EXPLOSIVE = "explosive"
 
 
+class ArmorClass(str, Enum):
+    """护甲类型（用于 Versus 伤害表，参考 OpenHV Versus 系统）。"""
+    NONE = "none"
+    LIGHT = "light"
+    ARMORED = "armored"
+    BIOLOGICAL = "biological"
+    MECHANICAL = "mechanical"
+
+
 @dataclass(frozen=True)
 class WeaponType:
-    """武器定义（Phase 2 只加载数据，Phase 3 combat 使用）。"""
+    """武器定义（Phase 3 扩展 Versus 表 + Burst）。"""
     id: str
     damage: float
     attacks: int = 1
@@ -53,6 +62,9 @@ class WeaponType:
     backswing: int = 0
     damage_type: DamageType = DamageType.NORMAL
     target_filters: frozenset[TargetFilter] = frozenset({TargetFilter.GROUND})
+    versus: dict = None
+    burst: int = 1
+    burst_delay: int = 0
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "target_filters", frozenset(self.target_filters))
@@ -79,6 +91,7 @@ class UnitType:
     weapon_air: Optional[WeaponType] = None
     is_flying: bool = False
     is_structure: bool = False
+    armor_class: ArmorClass = ArmorClass.NONE
     is_worker: bool = False
 
     def __post_init__(self) -> None:

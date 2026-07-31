@@ -47,3 +47,43 @@ class World:
         for sig, arch in self.archetypes.items():
             if required_fs.issubset(sig):
                 yield arch
+
+    def add_component(self, entity_id: int, component: Component) -> None:
+        """给实体添加组件 → 迁移到新 archetype（数据搬移）。"""
+        arch, row = self.entity_index.pop(entity_id)
+        # 读出当前所有组件实例
+        current = arch.read_row(row)
+        # 从旧 archetype swap-remove（更新被 swap 实体的 index）
+        last = arch.size - 1
+        arch.remove_row(row)
+        if row != last:
+            moved_id = arch.entity_ids[row]
+            self.entity_index[moved_id] = (arch, row)
+        # 加入新组件，构造新签名
+        new_type = type(component)
+        current[new_type] = component
+        new_sig = frozenset(current.keys())
+        new_arch = self.archetypes.get(new_sig)
+        if new_arch is None:
+            new_arch = Archetype(new_sig)
+            self.archetypes[new_sig] = new_arch
+        new_row = new_arch.add_row(entity_id, current)
+        self.entity_index[entity_id] = (new_arch, new_row)
+
+    def remove_component(self, entity_id: int, component_type: type[Component]) -> None:
+        """从实体移除组件 → 迁移到新 archetype（数据搬移）。"""
+        arch, row = self.entity_index.pop(entity_id)
+        current = arch.read_row(row)
+        del current[component_type]
+        last = arch.size - 1
+        arch.remove_row(row)
+        if row != last:
+            moved_id = arch.entity_ids[row]
+            self.entity_index[moved_id] = (arch, row)
+        new_sig = frozenset(current.keys())
+        new_arch = self.archetypes.get(new_sig)
+        if new_arch is None:
+            new_arch = Archetype(new_sig)
+            self.archetypes[new_sig] = new_arch
+        new_row = new_arch.add_row(entity_id, current)
+        self.entity_index[entity_id] = (new_arch, new_row)
